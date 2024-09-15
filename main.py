@@ -5,10 +5,10 @@ import os
 
 def create_db(conn):
 	with conn.cursor() as cur:
-		cur.execute("""
-			DROP TABLE phones;
-			DROP TABLE clients;
-		""")
+		# cur.execute("""
+		# 	DROP TABLE phones;
+		# 	DROP TABLE clients;
+		# """)
 		cur.execute("""
 			CREATE TABLE IF NOT EXISTS clients (
 				id SERIAL PRIMARY KEY,
@@ -39,9 +39,18 @@ def add_client(conn, first_name, last_name, email, phones=None):
 				""", (phone, client_id))
 		conn.commit()
 
+def add_phone(conn, phone, client_id):
+	with conn.cursor() as cur:
+		cur.execute("""
+			INSERT INTO phones (phone, client_id)
+			VALUES (%s, %s);
+		""", (phone, client_id))
+		conn.commit()
+
 if __name__ == "__main__":
 	load_dotenv()
 	with psycopg2.connect(database=os.getenv('database'), user=os.getenv('user'), password=os.getenv('password')) as conn:
 		create_db(conn)
-		add_client(conn, "Иван", "Головачев", "ivangol@gmail.com", [8789878997, 434654655])
+		# add_client(conn, "Иван", "Головачев", "ivangol@gmail.com", ['8789878997', '434654655'])
+		add_phone(conn, "1212123423", 1)
 	conn.close()
