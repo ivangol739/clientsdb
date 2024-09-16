@@ -77,10 +77,19 @@ def change_client(conn, client_id, first_name=None, last_name=None, email=None, 
 		conn.commit()
 
 def delete_phone(conn, client_id, phone):
-	pass
+	with conn.cursor() as cur:
+		cur.execute("""
+			DELETE FROM phones WHERE client_id = %s AND phone = %s;
+		""", (client_id, phone))
+		conn.commit()
 
 def delete_client(conn, client_id):
-	pass
+	with conn.cursor() as cur:
+		cur.execute("""
+			DELETE FROM clients WHERE id = %s;
+		""", (client_id,))
+		conn.commit()
+
 
 def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
 	pass
@@ -91,5 +100,9 @@ if __name__ == "__main__":
 		create_db(conn)
 		# add_client(conn, "Иван", "Головачев", "ivangol@gmail.com", ['8789878997', '434654655'])
 		# add_phone(conn, "1212123423", 1)
-		change_client(conn, 1, "Петр", "Петров", "fgdbbdb@gmail.com", [1111111111])
+		# change_client(conn, 1, "Петр", "Петров", "fgdbbdb@gmail.com", [1111111111])
+		# delete_phone(conn, 1, "1111111111")
+		# delete_client(conn, 1)
+		# add_client(conn, "Николай", "Николаев", "niknik@gmail.com", ['232523423', '2345757'])
+		# add_client(conn, "Сергей", "Сергеев", "serser@gmail.com", ['764345t32', '6567657'])
 	conn.close()
