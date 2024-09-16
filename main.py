@@ -92,7 +92,36 @@ def delete_client(conn, client_id):
 
 
 def find_client(conn, first_name=None, last_name=None, email=None, phone=None):
-	pass
+	with conn.cursor() as cur:
+		query = """
+			SELECT c.id, c.first_name, c.last_name, c.email, p.phone
+			FROM clients c
+			LEFT JOIN phones p ON p.client_id = c.id
+			WHERE 1=1
+		"""
+		params = []
+		if first_name:
+			query += "AND c.first_name = %s"
+			params.append(first_name)
+
+		if last_name:
+			query += "AND c.last_name = %s"
+			params.append(last_name)
+
+		if email:
+			query += "AND c.email = %s"
+			params.append(email)
+
+		if phone:
+			query += "AND p.phone = %s"
+			params.append(phone)
+
+		cur.execute(query, tuple(params))
+		res = cur.fetchall()
+		print(res)
+		for i in res:
+			print(f"id: {i[0]}, first_name: {i[1]}, last_name: {i[2]}, email: {i[3]}, phone: {i[4]}")
+
 
 if __name__ == "__main__":
 	load_dotenv()
@@ -105,4 +134,5 @@ if __name__ == "__main__":
 		# delete_client(conn, 1)
 		# add_client(conn, "Николай", "Николаев", "niknik@gmail.com", ['232523423', '2345757'])
 		# add_client(conn, "Сергей", "Сергеев", "serser@gmail.com", ['764345t32', '6567657'])
+		find_client(conn, None, None, None, "2345757")
 	conn.close()
